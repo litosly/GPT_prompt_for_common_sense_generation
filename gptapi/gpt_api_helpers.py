@@ -18,7 +18,7 @@ def generate_user_content_for_gpt(OBJECTS, RECEPTACLES, OUTPUT_EXAMPLE, RELATION
     + " to generate common-sense knowledge with list of RELATIONSHIPS = " + RELATIONSHIPS
     + ", in the form of (RELATIONSHIPS RECEPTACLESType OBJECTSType) e.g.: " + OUTPUT_EXAMPLE 
     + ", please give " + str(COUNT)
-    + "concise response without explanation")
+    + "concise response without explanation, must obey common sense")
 
     return user_content
 

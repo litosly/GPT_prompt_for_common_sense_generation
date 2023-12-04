@@ -36,8 +36,8 @@ def generate_refined_response(initial_response):
     return parsed_res
 
 if __name__ == "__main__":
-    OBJECTS = OBJECTS_SINGULAR[:5] 
-    RECEPTACLES = list(RECEPTACLES)[:5] + ["MicrowaveType"]
+    OBJECTS = OBJECTS_SINGULAR[:20] 
+    RECEPTACLES = list(RECEPTACLES)[:20] + ["MicrowaveType"]
     OUTPUT_EXAMPLE = ["(canContain BedType CellPhoneType)", "(canHeat MicrowaveType PlateType)"]
 
     initial_res = generate_initial_response(OBJECTS, RECEPTACLES, OUTPUT_EXAMPLE, COUNT = 20)
