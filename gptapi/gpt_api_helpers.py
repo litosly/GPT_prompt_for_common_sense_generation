@@ -1,24 +1,35 @@
 from openai import OpenAI
 
 # client = OpenAI(api_key='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')
-client = OpenAI(api_key='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')
+client = OpenAI(api_key='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')
 
 system_content_example = "You are a common-sense generator, skilled in generating common sense knowledge with restricted objects and perceptacles. You are to given concise output without explanation."
 user_content_example = "Use the list of Objects = Background, 'AlarmClock','Apple','ArmChair', 'BaseballBat', 'BasketBall and the a list of RECEPTACLES_EXPLORE = [ 'BathtubBasin',        'Drawer',        'Shelf',        'Sink',        'Cabinet',        'CounterTop'] to generate can-contain relationship, e.g.: (canContain BedType CellPhoneType) (canContain CounterTopType PotatoType), please give concise response without explanation"
 
-def generate_user_content_for_gpt(OBJECTS, RECEPTACLES, OUTPUT_EXAMPLE, RELATIONSHIPS, COUNT=20, print_input=True):
+def generate_user_content_for_gpt(OBJECTS, RECEPTACLES, OUTPUT_EXAMPLE, RELATIONSHIPS, COUNT=20, print_input=True, task_specific = True, Task = ""):
     if print_input:
         print("OBJECTS: ", OBJECTS)
         print("RECEPTACLES: ", RECEPTACLES)
         print("RELATIONSHIPS: ", RELATIONSHIPS)
+        if Task:
+            print("Task: ", Task)
         print("")
+    if task_specific:
+        user_content = ("In the task of " + Task 
+            + ", Use the list of Objects = " + OBJECTS 
+            + " and the the list of RECEPTACLES = " + RECEPTACLES 
+            + " to generate common-sense knowledge with list of RELATIONSHIPS = " + RELATIONSHIPS
+            + ", in the form of (RELATIONSHIPS RECEPTACLESType OBJECTSType) e.g.: " + OUTPUT_EXAMPLE 
+            + ", please give " + str(COUNT)
+            + "concise response without explanation, must obey common sense")
 
-    user_content = ("Use the list of Objects = " + OBJECTS 
-    + " and the the list of RECEPTACLES = " + RECEPTACLES 
-    + " to generate common-sense knowledge with list of RELATIONSHIPS = " + RELATIONSHIPS
-    + ", in the form of (RELATIONSHIPS RECEPTACLESType OBJECTSType) e.g.: " + OUTPUT_EXAMPLE 
-    + ", please give " + str(COUNT)
-    + "concise response without explanation, must obey common sense")
+    else:
+        user_content = ("Use the list of Objects = " + OBJECTS 
+            + " and the the list of RECEPTACLES = " + RECEPTACLES 
+            + " to generate common-sense knowledge with list of RELATIONSHIPS = " + RELATIONSHIPS
+            + ", in the form of (RELATIONSHIPS RECEPTACLESType OBJECTSType) e.g.: " + OUTPUT_EXAMPLE 
+            + ", please give " + str(COUNT)
+            + "concise response without explanation, must obey common sense")
 
     return user_content
 
@@ -59,11 +70,20 @@ def parse_concise_content(content, parser = "\n"):
     """
     return content.split(parser)
 
-def generate_user_content_for_correcting(initial_result):
+def generate_user_content_for_correcting(initial_result, task = ""):
     """Ask Chatgpt to refine its answer so that it only include practical result 
 
     Args:
         initial_result (_type_): _description_
     """
-    user_content = "pick the correct common sense knowledge from below and respond with copy of the correct ones without explanation:"
+    if not task:
+        user_content = "pick the correct common sense knowledge from below and respond with copy of the correct ones without explanation:"
+    if task:
+        user_content = "pick 20 most relevant common sense knowledge from below for task: " + task + ", should contain the object in the task, and respond with copy of the correct ones without explanation:"
     return user_content + str(initial_result)
+
+def generate_input_from_task(OBJECTS, RECEPTACLES, task):
+    user_content = ("Identify a concise list of 20 objects and 10 recipticles that are commonly seen from list of Objects = " + OBJECTS 
+        + " and list of RECEPTACLES = " + RECEPTACLES + " to assist in the task of " + task + ". Give concise response in the form of object: list OBJECTS and Receptacles: list of Receptacles without explanation"
+    )
+    return user_content
